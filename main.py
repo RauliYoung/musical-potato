@@ -1,19 +1,14 @@
-import task_manager
+from storage import ExcelStorage
+from task_manager import TaskManager
 
-def main():
-    task_manager.create_workbook()
-    task_manager.add_task(
-        project="Task Manager",
-        task="Write README so you remember where you left.",
-        priority="High",
-        next_action="Go to bed.",
-        notes = "Remember to think for yourself, you are not always in a terrible hurry."
-  
-    )
-    task_manager.update_task(2)
-    # task_manager.delete_task(4)
-    task_manager.delete_task([2,3,4])
-    # print(task_manager.load_tasks())
-    task_manager.delete_task(999)
-if __name__ == "__main__":
-    main()
+
+storage = ExcelStorage()
+manager = TaskManager(storage)
+
+manager.add_task(
+    project="Task Manager",
+    task="Write README",
+    priority="High",
+    notes="Remember where you left off.",
+    next_action="Go to bed.",
+)
