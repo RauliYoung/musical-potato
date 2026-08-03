@@ -36,7 +36,6 @@ class TaskManager:
         }
 
         tasks.loc[len(tasks)] = new_task
-
         self.storage.save_tasks(tasks)
 
     def delete_task(self, ids: int | list[int]):
