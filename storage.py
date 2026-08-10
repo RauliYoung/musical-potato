@@ -16,6 +16,7 @@ class ExcelStorage:
         "Notes",
     ]
 
+    # TODO: Add handling so that overwrites do not destroy, now it is apparently ok. could be by project, so sheet per project.
     def __init__(self, filename="taskhandler.xlsx"):
         base_dir = Path(__file__).resolve().parent
         data_dir = base_dir / "data"

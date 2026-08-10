@@ -26,13 +26,14 @@ class TaskManager:
             "ID": next_id,
             "Project": project,
             "Task": task,
-            "Status": "Todo",
+            "Status": "Todo",  # Figure out a statussystem, also state of task? How to do this.
             "Priority": priority,
             "Created": today,
-            "Started": None,
-            "Completed": None,
+            "Started": None,  # Add handling to start taskk
+            "Completed": None,  # Add handling to complet task
             "Next Action": next_action,
             "Notes": notes or "",
+            # Calculate duration from start to finnish, this could be an interesting task..
         }
 
         tasks.loc[len(tasks)] = new_task
@@ -53,6 +54,6 @@ class TaskManager:
 
         task = tasks[tasks["ID"] == task_id]
 
-        # TODO: implement updating
+        # TODO: implement updating, storage handles updating? like save or load?
 
         self.storage.save_tasks(tasks)
