@@ -1,34 +1,147 @@
+MAIN_MENU = ["Projects", "Quit"]
+
+
 class CLI:
     def __init__(self, manager):
         self.manager = manager
 
-    # manager CRUD for the tasks..
     def print_logo(self):
         print("=============")
-        print("Task Manager ")
+        print(" Task Manager")
         print("=============")
 
-    def show_menu(self):
+    def add_task(self, project):
+        # TODO: Gather input from the user.
+        #
+        # title = input("Task: ")
+        # priority = input("Priority: ")
+        # next_action = input("Next action: ")
+        # notes = input("Notes: ")
+        #
+        # self.manager.add_task(
+        #     project=project,
+        #     task=title,
+        #     priority=priority,
+        #     notes=notes,
+        #     next_action=next_action,
+        # )
+        pass
+
+    def show_menu(self, title, options):
         self.print_logo()
+        print(title)
+        print()
+
+        for i, option in enumerate(options, start=1):
+            print(f"{i}. {option}")
+
         while True:
-            print("1. Projects")
-            print("2. Quit")
-            print("\n")
-            choice = input(">")
-            if not self.input_handler(choice):
-                break
+            choice = input("> ")
+
+            if choice.isdigit():
+                choice = int(choice)
+
+                if 1 <= choice <= len(options):
+                    return choice
+
+            print("Invalid choice.")
+
+    def show_task_menu(self, task):
+        while True:
+            choice = self.show_menu(
+                task["Task"],
+                [
+                    "Complete",
+                    "Edit",
+                    "Delete",
+                    "Back",
+                ],
+            )
+
+            if choice == 1:
+                self.manager.complete_task(task["ID"])
+                return
+
+            elif choice == 2:
+                self.manager.edit_task(task["ID"])
+                return
+
+            elif choice == 3:
+                self.manager.delete_task(task["ID"])
+                return
+
+            elif choice == 4:
+                return
+
+    def show_tasks_menu(self, project):
+        while True:
+            tasks = self.manager.get_tasks(project)
+
+            if not tasks:
+                print("No tasks.")
+                input("Press Enter...")
+                return
+
+            task_titles = [task["Task"] for task in tasks]
+            task_titles.append("Back")
+
+            choice = self.show_menu("Tasks", task_titles)
+
+            if choice == len(task_titles):
+                return
+
+            task = tasks[choice - 1]
+            self.show_task_menu(task)
+
+    def show_project_menu(self, project):
+        while True:
+            choice = self.show_menu(
+                project,
+                [
+                    "View Tasks",
+                    "Add Task",
+                    "Rename Project",
+                    "Delete Project",
+                    "Back",
+                ],
+            )
+
+            if choice == 1:
+                self.show_tasks_menu(project)
+
+            elif choice == 2:
+                self.add_task(project)
+
+            elif choice == 3:
+                self.manager.rename_project(project)
+
+            elif choice == 4:
+                self.manager.delete_project(project)
+                return
+
+            elif choice == 5:
+                return
+
+    def show_projects_menu(self):
+        projects = self.manager.get_projects()
+
+        if not projects:
+            print("No projects.")
+            input("Press Enter...")
+            return
+
+        choice = self.show_menu("Projects", projects)
+
+        project = projects[choice - 1]
+
+        self.show_project_menu(project)
 
     def run(self):
-        self.show_menu()
+        while True:
+            choice = self.show_menu("Main Menu", MAIN_MENU)
 
-    def input_handler(self, choice: str):
-        # Think how actions could be made...
-        actions = {"1": self.manager, "2": self.quit, "3": "", "4": "", "5": ""}
+            if choice == 1:
+                self.show_projects_menu()
 
-        if choice == "1":
-            return True
-        elif choice == "2":
-            return False
-        else:
-            print("Invalid choice")
-            return True
+            elif choice == 2:
+                return

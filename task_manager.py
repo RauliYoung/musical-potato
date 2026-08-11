@@ -57,3 +57,10 @@ class TaskManager:
         # TODO: implement updating, storage handles updating? like save or load?
 
         self.storage.save_tasks(tasks)
+
+    def get_projects(self) -> list[str]:
+        return self.storage.get_projects()
+
+    def get_tasks(self, project):
+        df = self.storage.load_tasks(project)
+        return df.to_dict(orient="records")

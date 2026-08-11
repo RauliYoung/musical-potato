@@ -1,0 +1,28 @@
+TODO
+
+Core
+
+- [ x] Implement save_tasks()
+- [ x] Implement add_task()
+  - [] How to start task, date time,
+  - [] When task is finnished, count how much time it took
+  - [] Possibility to stop the task
+  - [] Resume task
+- [ x] Implement load_task()
+- [ ] Implement update_task()
+- [ ] Implement delete_task()
+- [ ] Implement summary generation
+
+Notes
+
+- [ ] Decide storage format (Markdown vs SQLite vs Excel)
+- [ ] Design note structure
+- [ ] Create add_note()
+- [ ] Create search_notes()
+- [ ] Link notes to tasks/projects
+
+Quality
+
+- [ ] Validate workbook structure
+- [ ] Add logging
+- [ ] Handle corrupted workbook

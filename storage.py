@@ -33,10 +33,14 @@ class ExcelStorage:
         df = pd.DataFrame(columns=self.COLUMNS)
 
         with pd.ExcelWriter(self.workbook, engine="openpyxl") as writer:
-            df.to_excel(writer, sheet_name="Tasks", index=False)
+            df.to_excel(writer, index=False)
 
-    def load_tasks(self):
-        return pd.read_excel(self.workbook, sheet_name="Tasks")
+    def load_tasks(self, project):
+        return pd.read_excel(self.workbook, sheet_name=project)
 
     def save_tasks(self, tasks: pd.DataFrame):
         tasks.to_excel(self.workbook, sheet_name="Tasks", index=False)
+
+    def get_projects(self):
+        xl = pd.ExcelFile(self.workbook)
+        return xl.sheet_names
