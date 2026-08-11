@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
-
+# TODO: Separate pandas and openpyxl operations, so that openpyxl handles workbook operations.
+# And pandas task operations.
 
 class ExcelStorage:
     COLUMNS = [
@@ -33,7 +34,7 @@ class ExcelStorage:
         df = pd.DataFrame(columns=self.COLUMNS)
 
         with pd.ExcelWriter(self.workbook, engine="openpyxl") as writer:
-            df.to_excel(writer, index=False)
+            df.to_excel(writer, sheet_name="Welcom To Task Hassler" index=False)
 
     def load_tasks(self, project):
         return pd.read_excel(self.workbook, sheet_name=project)
