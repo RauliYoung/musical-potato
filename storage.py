@@ -44,3 +44,8 @@ class ExcelStorage:
     def get_projects(self):
         xl = pd.ExcelFile(self.workbook)
         return xl.sheet_names
+
+    def create_project(self, name):
+        with pd.ExcelWriter(self.workbook, engine="openpyxl", mode="a") as writer:
+            df = pd.DataFrame(columns=self.COLUMNS)
+            df.to_excel(writer, sheet_name=name, index=False)

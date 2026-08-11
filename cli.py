@@ -27,6 +27,12 @@ class CLI:
         # )
         pass
 
+    def create_project(self):
+        # TODO: Gather input from the user.
+        name = input("Give project name\n>")
+        if len(name) >= 3:
+            self.manager.create_project(name)
+
     def show_menu(self, title, options):
         self.print_logo()
         print(title)
@@ -34,7 +40,7 @@ class CLI:
 
         for i, option in enumerate(options, start=1):
             print(f"{i}. {option}")
-
+            # Add divider for projcets menu..
         while True:
             choice = input("> ")
 
@@ -123,18 +129,21 @@ class CLI:
                 return
 
     def show_projects_menu(self):
-        projects = self.manager.get_projects()
+        while True:
+            projects = self.manager.get_projects()
+            options = projects + ["New Project", "Back"]
 
-        if not projects:
-            print("No projects.")
-            input("Press Enter...")
-            return
+            choice = self.show_menu("Projects", options)
 
-        choice = self.show_menu("Projects", projects)
+            if choice <= len(projects):
+                project = projects[choice - 1]
+                self.show_project_menu(project)
 
-        project = projects[choice - 1]
+            elif choice == len(projects) + 1:
+                self.create_project()
 
-        self.show_project_menu(project)
+            else:
+                return
 
     def run(self):
         while True:

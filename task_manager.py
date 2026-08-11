@@ -64,3 +64,7 @@ class TaskManager:
     def get_tasks(self, project):
         df = self.storage.load_tasks(project)
         return df.to_dict(orient="records")
+
+    def create_project(self, project_name):
+        name = project_name
+        self.storage.create_project(name)
