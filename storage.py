@@ -1,7 +1,10 @@
 import pandas as pd
+from openpyxl import Workbook, load_workbook
 from pathlib import Path
+
 # TODO: Separate pandas and openpyxl operations, so that openpyxl handles workbook operations.
 # And pandas task operations.
+
 
 class ExcelStorage:
     COLUMNS = [
@@ -31,22 +34,37 @@ class ExcelStorage:
         if self.workbook.exists():
             return
 
-        df = pd.DataFrame(columns=self.COLUMNS)
+        wb = Workbook()
 
-        with pd.ExcelWriter(self.workbook, engine="openpyxl") as writer:
-            df.to_excel(writer, sheet_name="Welcom To Task Hassler" index=False)
+        sheet = wb.active
+        sheet.title = "Inbox"  # or "Welcome"
 
+        sheet.append(self.COLUMNS)
+
+        wb.save(self.workbook)
+
+    # OPENPYXL
+    def get_projects(self):
+        wb = load_workbook(self.workbook)
+        return wb.sheetnames
+
+    def create_project(self, name):
+        wb = load_workbook(self.workbook)
+        if name in wb.sheetnames:
+            raise ValueError(f"Project '{name}' already exists.")
+
+        sheet = wb.create_sheet(title=name)
+
+        sheet.append(self.COLUMNS)
+
+        wb.save(self.workbook)
+
+    # PANDAS
     def load_tasks(self, project):
         return pd.read_excel(self.workbook, sheet_name=project)
 
-    def save_tasks(self, tasks: pd.DataFrame):
-        tasks.to_excel(self.workbook, sheet_name="Tasks", index=False)
-
-    def get_projects(self):
-        xl = pd.ExcelFile(self.workbook)
-        return xl.sheet_names
-
-    def create_project(self, name):
-        with pd.ExcelWriter(self.workbook, engine="openpyxl", mode="a") as writer:
-            df = pd.DataFrame(columns=self.COLUMNS)
-            df.to_excel(writer, sheet_name=name, index=False)
+    def save_tasks(self, tasks: pd.DataFrame, project):
+        with pd.ExcelWriter(
+            self.workbook, engine="openpyxl", mode="a", if_sheet_exists="replace"
+        ) as writer:
+            tasks.to_excel(writer, sheet_name=project, index=False)

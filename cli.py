@@ -12,20 +12,19 @@ class CLI:
 
     def add_task(self, project):
         # TODO: Gather input from the user.
-        #
-        # title = input("Task: ")
-        # priority = input("Priority: ")
-        # next_action = input("Next action: ")
-        # notes = input("Notes: ")
-        #
-        # self.manager.add_task(
-        #     project=project,
-        #     task=title,
-        #     priority=priority,
-        #     notes=notes,
-        #     next_action=next_action,
-        # )
-        pass
+
+        title = input("Task: ")
+        priority = input("Priority: ")
+        next_action = input("Next action: ")
+        notes = input("Notes: ")
+
+        self.manager.add_task(
+            project=project,
+            task=title,
+            priority=priority,
+            notes=notes,
+            next_action=next_action,
+        )
 
     def create_project(self):
         # TODO: Gather input from the user.

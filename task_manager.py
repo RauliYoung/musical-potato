@@ -13,7 +13,7 @@ class TaskManager:
         notes: str,
         next_action: str = "",
     ):
-        tasks = self.storage.load_tasks()
+        tasks = self.storage.load_tasks(project)
 
         today = datetime.now().strftime("%d-%m-%Y")
 
@@ -37,7 +37,7 @@ class TaskManager:
         }
 
         tasks.loc[len(tasks)] = new_task
-        self.storage.save_tasks(tasks)
+        self.storage.save_tasks(tasks, project)
 
     def delete_task(self, ids: int | list[int]):
         tasks = self.storage.load_tasks()
