@@ -49,7 +49,6 @@ class CLI:
             print("No changes made.")
 
     def create_project(self):
-        # TODO: Gather input from the user.
         name = input("Give project name\n>")
         if len(name) >= 3:
             self.manager.create_project(name)
@@ -93,7 +92,7 @@ class CLI:
                 return
 
             elif choice == 2:
-                self.manager.edit_task(task["ID"])
+                self.edit_task(task["Project"], task["ID"])
                 return
 
             elif choice == 3:
@@ -143,6 +142,7 @@ class CLI:
                 self.add_task(project)
 
             elif choice == 3:
+                # Not manager, but self rename -> then call manager to updated project.
                 self.manager.rename_project(project)
 
             elif choice == 4:
