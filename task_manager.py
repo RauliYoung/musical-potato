@@ -1,70 +1,39 @@
-from datetime import datetime
+import pandas as pd
+from storage import ExcelStorage
 
 
 class TaskManager:
-    def __init__(self, storage):
+    def __init__(self, storage: ExcelStorage):
         self.storage = storage
 
-    def add_task(
-        self,
-        project: str,
-        task: str,
-        priority: str,
-        notes: str,
-        next_action: str = "",
-    ):
-        tasks = self.storage.load_tasks()
+    def add_task(self, project: str, task_data: dict) -> None:
+        """Add a task to a project."""
+        tasks = self.storage.load_tasks(project)
+        new_task = pd.DataFrame([task_data])
+        tasks = pd.concat([tasks, new_task], ignore_index=True)
+        self.storage.save_tasks(tasks, project)
 
-        today = datetime.now().strftime("%d-%m-%Y")
+    def update_task(self, project: str, task_id: int, updates: dict) -> None:
+        """Update a task in a project."""
+        tasks = self.storage.load_tasks(project)
+        for key, value in updates.items():
+            tasks.loc[tasks["ID"] == task_id, key] = value
+        self.storage.save_tasks(tasks, project)
 
-        if tasks.empty:
-            next_id = 1
-        else:
-            next_id = tasks["ID"].max() + 1
+    def delete_task(self, project: str, task_id: int) -> None:
+        """Delete a task from a project."""
+        tasks = self.storage.load_tasks(project)
+        tasks = tasks[tasks["ID"] != task_id]
+        self.storage.save_tasks(tasks, project)
 
-        new_task = {
-            "ID": next_id,
-            "Project": project,
-            "Task": task,
-            "Status": "Todo",  # Figure out a statussystem, also state of task? How to do this.
-            "Priority": priority,
-            "Created": today,
-            "Started": None,  # Add handling to start taskk
-            "Completed": None,  # Add handling to complet task
-            "Next Action": next_action,
-            "Notes": notes or "",
-            # Calculate duration from start to finnish, this could be an interesting task..
-        }
+    def get_tasks(self, project: str) -> pd.DataFrame:
+        """Get all tasks from a project."""
+        return self.storage.load_tasks(project)
 
-        tasks.loc[len(tasks)] = new_task
-        self.storage.save_tasks(tasks)
-
-    def delete_task(self, ids: int | list[int]):
-        tasks = self.storage.load_tasks()
-
-        if isinstance(ids, list):
-            tasks = tasks[~tasks["ID"].isin(ids)]
-        else:
-            tasks = tasks[tasks["ID"] != ids]
-
-        self.storage.save_tasks(tasks)
-
-    def update_task(self, task_id: int):
-        tasks = self.storage.load_tasks()
-
-        task = tasks[tasks["ID"] == task_id]
-
-        # TODO: implement updating, storage handles updating? like save or load?
-
-        self.storage.save_tasks(tasks)
-
-    def get_projects(self) -> list[str]:
+    def get_projects(self) -> list:
+        """Get all projects."""
         return self.storage.get_projects()
 
-    def get_tasks(self, project):
-        df = self.storage.load_tasks(project)
-        return df.to_dict(orient="records")
-
-    def create_project(self, project_name):
-        name = project_name
+    def create_project(self, name: str) -> None:
+        """Create a new project."""
         self.storage.create_project(name)

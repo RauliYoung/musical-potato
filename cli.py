@@ -1,9 +1,13 @@
+from storage import ExcelStorage
+from task_manager import TaskManager
+import pandas as pd
+
 MAIN_MENU = ["Projects", "Quit"]
 
 
 class CLI:
-    def __init__(self, manager):
-        self.manager = manager
+    def __init__(self, task_manager: TaskManager):
+        self.manager = task_manager
 
     def print_logo(self):
         print("=============")
@@ -11,27 +15,58 @@ class CLI:
         print("=============")
 
     def add_task(self, project):
-        # TODO: Gather input from the user.
-        #
-        # title = input("Task: ")
-        # priority = input("Priority: ")
-        # next_action = input("Next action: ")
-        # notes = input("Notes: ")
-        #
-        # self.manager.add_task(
-        #     project=project,
-        #     task=title,
-        #     priority=priority,
-        #     notes=notes,
-        #     next_action=next_action,
-        # )
-        pass
+        title = input("Task: ")
+        priority = input("Priority: ")
+        next_action = input("Next action: ")
+        notes = input("Notes: ")
+        
+        task_data = {
+            "ID": None,
+            "Project": project,
+            "Task": title,
+            "Status": "Pending",
+            "Priority": priority,
+            "Created": pd.Timestamp.now(),
+            "Started": None,
+            "Completed": None,
+            "Next Action": next_action,
+            "Notes": notes,
+        }
+        self.manager.add_task(project, task_data)
+        print("Task added.")
+
+    def edit_task(self, project, task_id):
+        title = input("Task (leave blank to skip): ") or None
+        priority = input("Priority (leave blank to skip): ") or None
+        next_action = input("Next action (leave blank to skip): ") or None
+        notes = input("Notes (leave blank to skip): ") or None
+        status = input("Status (leave blank to skip): ") or None
+        
+        updates = {}
+        if title:
+            updates["Task"] = title
+        if priority:
+            updates["Priority"] = priority
+        if next_action:
+            updates["Next Action"] = next_action
+        if notes:
+            updates["Notes"] = notes
+        if status:
+            updates["Status"] = status
+        
+        if updates:
+            self.manager.update_task(project, task_id, updates)
+            print("Task updated.")
+        else:
+            print("No changes made.")
 
     def create_project(self):
-        # TODO: Gather input from the user.
-        name = input("Give project name\n>")
+        name = input("Give project name: ")
         if len(name) >= 3:
             self.manager.create_project(name)
+            print(f"Project '{name}' created.")
+        else:
+            print("Project name must be at least 3 characters.")
 
     def show_menu(self, title, options):
         self.print_logo()
@@ -40,7 +75,7 @@ class CLI:
 
         for i, option in enumerate(options, start=1):
             print(f"{i}. {option}")
-            # Add divider for projcets menu..
+            
         while True:
             choice = input("> ")
 
@@ -52,11 +87,18 @@ class CLI:
 
             print("Invalid choice.")
 
+    def print_task_details(self, task):
+        self.print_logo()
+        for key, value in task.items():
+            print(f"{key}: {value}")
+        print()
+
     def show_task_menu(self, task):
         while True:
             choice = self.show_menu(
                 task["Task"],
                 [
+                    "View Details",
                     "Complete",
                     "Edit",
                     "Delete",
@@ -65,30 +107,36 @@ class CLI:
             )
 
             if choice == 1:
-                self.manager.complete_task(task["ID"])
-                return
+                self.print_task_details(task)
+                input("Press Enter...")
 
             elif choice == 2:
-                self.manager.edit_task(task["ID"])
+                self.manager.update_task(task["Project"], task["ID"], {"Status": "Completed", "Completed": pd.Timestamp.now()})
+                print("Task marked as completed.")
                 return
 
             elif choice == 3:
-                self.manager.delete_task(task["ID"])
+                self.edit_task(task["Project"], task["ID"])
                 return
 
             elif choice == 4:
+                self.manager.delete_task(task["Project"], task["ID"])
+                print("Task deleted.")
+                return
+
+            elif choice == 5:
                 return
 
     def show_tasks_menu(self, project):
         while True:
             tasks = self.manager.get_tasks(project)
 
-            if not tasks:
+            if tasks.empty:
                 print("No tasks.")
                 input("Press Enter...")
                 return
 
-            task_titles = [task["Task"] for task in tasks]
+            task_titles = tasks["Task"].tolist()
             task_titles.append("Back")
 
             choice = self.show_menu("Tasks", task_titles)
@@ -96,7 +144,7 @@ class CLI:
             if choice == len(task_titles):
                 return
 
-            task = tasks[choice - 1]
+            task = tasks.iloc[choice - 1].to_dict()
             self.show_task_menu(task)
 
     def show_project_menu(self, project):
@@ -106,8 +154,6 @@ class CLI:
                 [
                     "View Tasks",
                     "Add Task",
-                    "Rename Project",
-                    "Delete Project",
                     "Back",
                 ],
             )
@@ -119,13 +165,6 @@ class CLI:
                 self.add_task(project)
 
             elif choice == 3:
-                self.manager.rename_project(project)
-
-            elif choice == 4:
-                self.manager.delete_project(project)
-                return
-
-            elif choice == 5:
                 return
 
     def show_projects_menu(self):
@@ -146,6 +185,7 @@ class CLI:
                 return
 
     def run(self):
+        self.print_logo()
         while True:
             choice = self.show_menu("Main Menu", MAIN_MENU)
 
@@ -153,4 +193,12 @@ class CLI:
                 self.show_projects_menu()
 
             elif choice == 2:
+                print("Goodbye!")
                 return
+
+
+if __name__ == "__main__":
+    storage = ExcelStorage()
+    manager = TaskManager(storage)
+    cli = CLI(manager)
+    cli.run()
