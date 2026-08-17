@@ -6,4 +6,3 @@ storage = ExcelStorage()
 manager = TaskManager(storage)
 cli = CLI(manager)
 cli.run()
-1

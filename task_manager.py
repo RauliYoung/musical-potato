@@ -55,6 +55,8 @@ class TaskManager:
         task = tasks[tasks["ID"] == task_id]
 
         # TODO: implement updating, storage handles updating? like save or load?
+        # TODO: cli asks what is done and handles input, manager modifies it and storage
+        # just handles saving and loading.
 
         self.storage.save_tasks(tasks)
 
