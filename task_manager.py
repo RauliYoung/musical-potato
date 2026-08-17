@@ -39,33 +39,23 @@ class TaskManager:
         tasks.loc[len(tasks)] = new_task
         self.storage.save_tasks(tasks, project)
 
-    def delete_task(self, ids: int | list[int]):
-        tasks = self.storage.load_tasks()
+    def delete_task(self, project, task_id):
+        tasks = self.storage.load_tasks(project)
+        tasks = tasks[tasks["ID"]] != task_id
+        self.storage.save_tasks(tasks, project)
 
-        if isinstance(ids, list):
-            tasks = tasks[~tasks["ID"].isin(ids)]
-        else:
-            tasks = tasks[tasks["ID"] != ids]
-
-        self.storage.save_tasks(tasks)
-
-    def update_task(self, task_id: int):
-        tasks = self.storage.load_tasks()
-
-        task = tasks[tasks["ID"] == task_id]
-
-        # TODO: implement updating, storage handles updating? like save or load?
-        # TODO: cli asks what is done and handles input, manager modifies it and storage
-        # just handles saving and loading.
-
-        self.storage.save_tasks(tasks)
-
-    def get_projects(self) -> list[str]:
-        return self.storage.get_projects()
+    def update_task(self, project, task_id, updates):
+        tasks = self.storage.load_tasks(project)
+        for key, value in updates.items():
+            tasks.loc[tasks["ID"] == task_id, key] = value
+        self.storage.save_tasks(tasks, project)
 
     def get_tasks(self, project):
         df = self.storage.load_tasks(project)
         return df.to_dict(orient="records")
+
+    def get_projects(self) -> list[str]:
+        return self.storage.get_projects()
 
     def create_project(self, project_name):
         name = project_name

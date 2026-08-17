@@ -11,8 +11,6 @@ class CLI:
         print("=============")
 
     def add_task(self, project):
-        # TODO: Gather input from the user.
-
         title = input("Task: ")
         priority = input("Priority: ")
         next_action = input("Next action: ")
@@ -25,6 +23,30 @@ class CLI:
             notes=notes,
             next_action=next_action,
         )
+
+    def edit_task(self, project, task_id):
+        title = input("Task (Leave blank to skip): ") or None
+        priority = input("Priority (Leave blank to skip): ") or None
+        next_action = input("Next action (Leave blank to skip): ") or None
+        notes = input("Notes (Leave blank to skip): ") or None
+        status = input("Status (Leave blank to skip): ") or None
+        updates = {}
+        if title:
+            updates["Task"] = title
+        if priority:
+            updates["Priority"] = priority
+        if next_action:
+            updates["Next_action"] = next_action
+        if notes:
+            updates["Notes"] = notes
+        if status:
+            updates["Status"] = status
+        if updates:
+            self.manager.update_task(
+                project, task_id, updates
+            )  # This needs updates in manager and prolly storage.
+        else:
+            print("No changes made.")
 
     def create_project(self):
         # TODO: Gather input from the user.
@@ -51,6 +73,10 @@ class CLI:
 
             print("Invalid choice.")
 
+    def print_task_details(self, task):
+        # TODO
+        pass
+
     def show_task_menu(self, task):
         while True:
             choice = self.show_menu(
@@ -62,7 +88,6 @@ class CLI:
                     "Back",
                 ],
             )
-
             if choice == 1:
                 self.manager.complete_task(task["ID"])
                 return
