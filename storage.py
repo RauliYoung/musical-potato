@@ -19,6 +19,18 @@ class ExcelStorage:
         "Next Action",
         "Notes",
     ]
+    COLUMN_TYPES = {
+        "ID": "Int64",
+        "Project": "string",
+        "Task": "string",
+        "Status": "string",
+        "Priority": "string",
+        "Created": "string",
+        "Started": "string",
+        "Completed": "string",
+        "Next Action": "string",
+        "Notes": "string",
+    }
 
     # TODO: Add handling so that overwrites do not destroy, now it is apparently ok. could be by project, so sheet per project.
     def __init__(self, filename="taskhandler.xlsx"):
@@ -61,7 +73,14 @@ class ExcelStorage:
 
     # PANDAS
     def load_tasks(self, project):
-        return pd.read_excel(self.workbook, sheet_name=project)
+        tasks = pd.read_excel(
+            self.workbook,
+            sheet_name=project,
+        )
+        for column, dtype in self.COLUMN_TYPES.items():
+            if column in tasks.columns:
+                tasks[column] = tasks[column].astype(dtype)
+        return tasks
 
     def save_tasks(self, tasks: pd.DataFrame, project):
         with pd.ExcelWriter(
