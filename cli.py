@@ -75,7 +75,6 @@ class CLI:
             print("Invalid choice.")
 
     def print_task_details(self, task):
-        print(task)
         self.print_logo()
         for key, value in task.items():
             print(f"{key}: {value}")
@@ -95,6 +94,7 @@ class CLI:
             )
             if choice == 1:
                 self.print_task_details(task)
+                input("Press Enter...")
             if choice == 2:
                 self.manager.update_task(
                     (task["Project"], task["ID"]),
