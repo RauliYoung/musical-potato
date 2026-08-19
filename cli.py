@@ -83,6 +83,7 @@ class CLI:
             choice = self.show_menu(
                 task["Task"],
                 [
+                    "View task details",
                     "Complete",
                     "Edit",
                     "Delete",
@@ -90,18 +91,20 @@ class CLI:
                 ],
             )
             if choice == 1:
-                self.manager.complete_task(task["Project"], task["ID"])
-                return
-
-            elif choice == 2:
-                self.edit_task(task["Project"], task["ID"])
+                self.print_task_details(task)
+            if choice == 2:
+                self.manager.update_task((task["Project"], task["ID"]), {task["ID"]})
                 return
 
             elif choice == 3:
-                self.manager.delete_task(task["Project"].task["ID"])
+                self.edit_task(task["Project"], task["ID"])
                 return
 
             elif choice == 4:
+                self.manager.delete_task(task["Project"].task["ID"])
+                return
+
+            elif choice == 5:
                 return
 
     def show_tasks_menu(self, project):
