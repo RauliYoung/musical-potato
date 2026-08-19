@@ -52,7 +52,7 @@ class TaskManager:
         tasks = tasks[tasks["ID"]] != task_id
         self.storage.save_tasks(tasks, project)
 
-    def update_task(self, project, task_id, updates):
+    def update_task(self, project, task_id, updates: dict) -> None:
         tasks = self.storage.load_tasks(project)
         for key, value in updates.items():
             tasks.loc[tasks["ID"] == task_id, key] = value

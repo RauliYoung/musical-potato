@@ -95,9 +95,10 @@ class CLI:
             if choice == 1:
                 self.print_task_details(task)
                 input("Press Enter...")
-            if choice == 2:
+            elif choice == 2:
                 self.manager.update_task(
-                    (task["Project"], task["ID"]),
+                    task["Project"],
+                    task["ID"],
                     {
                         "Status": "Completed",
                         "Completed": datetime.now().strftime("%d-%m-%Y"),
