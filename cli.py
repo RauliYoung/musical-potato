@@ -73,8 +73,10 @@ class CLI:
             print("Invalid choice.")
 
     def print_task_details(self, task):
-        # TODO
-        pass
+        self.print_logo()
+        for key, value in task.items():
+            print(f"{key}: {value}")
+        print()
 
     def show_task_menu(self, task):
         while True:
@@ -88,7 +90,7 @@ class CLI:
                 ],
             )
             if choice == 1:
-                self.manager.complete_task(task["ID"])
+                self.manager.complete_task(task["Project"], task["ID"])
                 return
 
             elif choice == 2:
@@ -96,7 +98,7 @@ class CLI:
                 return
 
             elif choice == 3:
-                self.manager.delete_task(task["ID"])
+                self.manager.delete_task(task["Project"].task["ID"])
                 return
 
             elif choice == 4:

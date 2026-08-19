@@ -39,6 +39,14 @@ class TaskManager:
         tasks.loc[len(tasks)] = new_task
         self.storage.save_tasks(tasks, project)
 
+    def complete_task(self, project, task_id):
+        tasks = self.storage.load_tasks(project)
+        tasks = tasks.loc[tasks["ID"] == task_id, "Completed"] = (
+            datetime.now().strftime("%d-%m-%Y")
+        )
+        self.storage.save_tasks(tasks, project)
+        # Add some kind of better handling so that it gives some data from started and ended and so on.
+
     def delete_task(self, project, task_id):
         tasks = self.storage.load_tasks(project)
         tasks = tasks[tasks["ID"]] != task_id
