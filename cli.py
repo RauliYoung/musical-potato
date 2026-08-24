@@ -46,7 +46,7 @@ class CLI:
         if updates:
             self.manager.update_task(
                 project, task_id, updates
-            )  # This needs updates in manager and prolly storage.
+            )
         else:
             print("No changes made.")
 
@@ -54,7 +54,10 @@ class CLI:
         name = input("Give project name\n>")
         if len(name) >= 3:
             self.manager.create_project(name)
-
+    def rename_project(self, project):
+        new_name = input("Give new name\n>")
+        if len(new_name) > 1:
+            self.manager.rename_project(project, new_name)
     def show_menu(self, title, options):
         self.print_logo()
         print(title)
@@ -159,9 +162,11 @@ class CLI:
 
             elif choice == 3:
                 # Not manager, but self rename -> then call manager to updated project.
-                self.manager.rename_project(project)
+                #TODO functionality for renaming project.
+                self.rename_project(project)
 
             elif choice == 4:
+                #TODO functionality for delete
                 self.manager.delete_project(project)
                 return
 

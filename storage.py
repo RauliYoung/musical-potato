@@ -70,7 +70,13 @@ class ExcelStorage:
         sheet.append(self.COLUMNS)
 
         wb.save(self.workbook)
-
+    def rename_project(self, project, new_name):
+        wb = load_workbook(self.workbook)
+        wb_sheet = wb[project]
+        if wb_sheet:
+            wb_sheet.title = new_name
+            wb.save(self.workbook)
+        pass
     # PANDAS
     def load_tasks(self, project):
         tasks = pd.read_excel(

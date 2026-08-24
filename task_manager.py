@@ -69,3 +69,5 @@ class TaskManager:
     def create_project(self, project_name):
         name = project_name
         self.storage.create_project(name)
+    def rename_project(self, project, new_name):
+        self.storage.rename_project(project, new_name)
