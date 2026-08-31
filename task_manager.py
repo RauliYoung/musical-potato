@@ -56,6 +56,7 @@ class TaskManager:
         tasks = self.storage.load_tasks(project)
         print(tasks["ID"] == task_id)
         for key, value in updates.items():
+            print(value, "THe value", "The key: ", key)
             tasks.loc[tasks["ID"] == task_id, key] = value
         self.storage.save_tasks(tasks, project)
 
